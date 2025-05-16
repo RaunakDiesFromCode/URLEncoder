@@ -63,39 +63,12 @@ class URLRequest(BaseModel):
 
 # ---------- HELPERS ----------
 def encode_domain(domain: str) -> str:
-    if domain in DOMAIN_MAP:
-        return DOMAIN_MAP[domain]
-
-    # Break down: subdomain.domain.tld
-    parts = domain.split('.')
-    if len(parts) < 2:
-        return domain
-
-    sub, rest = parts[0], parts[1:]
-
-    sub_code = SUBDOMAIN_MAP.get(sub, sub) if len(parts) > 2 else ''
-    tld_code = TLD_MAP.get('.'.join(rest[1:]), TLD_MAP.get(
-        rest[-1], rest[-1])) if len(rest) > 1 else ''
-
-    return f"{sub_code}.{rest[0]}.{tld_code}".strip('.')
+    return base62_encode_bytes(brotli.compress(domain.encode(), quality=11))
 
 
 def decode_domain(encoded: str) -> str:
-    if encoded in REVERSE_DOMAIN_MAP:
-        return REVERSE_DOMAIN_MAP[encoded]
+    return brotli.decompress(base62_decode_to_bytes(encoded)).decode()
 
-    parts = encoded.split('.')
-    if len(parts) == 3:
-        sub, dom, tld = parts
-    elif len(parts) == 2:
-        sub, dom, tld = '', parts[0], parts[1]
-    else:
-        return encoded
-
-    sub_real = {v: k for k, v in SUBDOMAIN_MAP.items()}.get(sub, sub)
-    tld_real = {v: k for k, v in TLD_MAP.items()}.get(tld, tld)
-
-    return '.'.join(p for p in [sub_real, dom, tld_real] if p)
 
 
 # ---------- ROUTES ----------
@@ -112,23 +85,34 @@ def encode_url(request: URLRequest):
     domain_code = encode_domain(domain)
     path_code = compress_path(path) if path and path != '/' else ''
 
-    encoded = f"{proto_code}_{domain_code}_{path_code}"
+    parts = [proto_code, domain_code]
+    if path_code:
+        parts.append(path_code)
+
+    encoded = '-'.join(parts)
     return {"code": encoded}
 
 
 @app.get("/decode/{code}")
 def decode_url(code: str):
-    try:
-        proto_code, domain_code, *path_parts = code.split('_')
-    except ValueError:
+    parts = code.split('-')
+    if len(parts) < 2:
         raise HTTPException(status_code=400, detail="Invalid code format")
 
-    protocol = 'https' if proto_code == 's' else 'http'
-    domain = decode_domain(domain_code)
+    proto_code = parts[0]
+    domain_code = parts[1]
+    path_code = parts[2] if len(parts) > 2 else None
 
-    if path_parts:
+    protocol = 'https' if proto_code == 's' else 'http'
+
+    try:
+        domain = decode_domain(domain_code)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Failed to decode domain")
+
+    if path_code:
         try:
-            path = decompress_path(path_parts[0])
+            path = decompress_path(path_code)
         except Exception:
             raise HTTPException(
                 status_code=400, detail="Failed to decode path")

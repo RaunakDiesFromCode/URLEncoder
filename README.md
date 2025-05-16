@@ -6,12 +6,12 @@ A **fast** and **efficient** URL shortener built with [FastAPI](https://fastapi.
 
 ## ✨ Features
 
--   🔗 **Shortens long URLs** into compact, shareable codes
--   ⚡ **Domain shortcuts** for popular sites (e.g., `google.com` → `g`)
--   🏷️ **Subdomain & TLD shortcuts** (e.g., `www` → `w`, `.com` → `c`)
--   🗜️ **Brotli compression** for path components
--   🔢 **Base62 encoding** for URL-safe output
--   🚀 **Lightweight & blazing fast**
+- 🔗 **Shortens long URLs** into compact, shareable codes
+- ⚡ **Domain shortcuts** for popular sites (e.g., `google.com` → `g`)
+- 🏷️ **Subdomain & TLD shortcuts** (e.g., `www` → `w`, `.com` → `c`)
+- 🗜️ **Brotli compression** for path components
+- 🔢 **Base62 encoding** for URL-safe output
+- 🚀 **Lightweight & blazing fast**
 
 ---
 
@@ -22,18 +22,16 @@ A **fast** and **efficient** URL shortener built with [FastAPI](https://fastapi.
 **POST** `/encode`
 
 **Request:**
-
 ```json
 {
-    "url": "https://www.example.com/some/long/path"
+  "url": "https://www.example.com/some/long/path"
 }
 ```
 
 **Response:**
-
 ```json
 {
-    "code": "s_w.example.c_2yZ..."
+  "code": "s_w.example.c_2yZ..."
 }
 ```
 
@@ -46,10 +44,9 @@ A **fast** and **efficient** URL shortener built with [FastAPI](https://fastapi.
 **Example:** `/decode/s_w.example.c_2yZ...`
 
 **Response:**
-
 ```json
 {
-    "url": "https://www.example.com/some/long/path"
+  "url": "https://www.example.com/some/long/path"
 }
 ```
 
@@ -57,13 +54,13 @@ A **fast** and **efficient** URL shortener built with [FastAPI](https://fastapi.
 
 ## 🏷️ Domain Shortcuts
 
-| Domain       | Shortcut |
-| ------------ | :------: |
-| google.com   |    g     |
-| youtube.com  |    y     |
-| facebook.com |    f     |
-| github.com   |    gh    |
-| openai.com   |    oa    |
+| Domain         | Shortcut |
+| -------------- | :------: |
+| google.com     |    g     |
+| youtube.com    |    y     |
+| facebook.com   |    f     |
+| github.com     |   gh     |
+| openai.com     |   oa     |
 
 ---
 
@@ -79,13 +76,13 @@ A **fast** and **efficient** URL shortener built with [FastAPI](https://fastapi.
 
 **TLDs:**
 
-| TLD   | Shortcut |
-| ----- | :------: |
-| com   |    c     |
-| org   |    o     |
-| net   |    n     |
-| io    |    i     |
-| co.uk |    uk    |
+| TLD    | Shortcut |
+| ------ | :------: |
+| com    |    c     |
+| org    |    o     |
+| net    |    n     |
+| io     |    i     |
+| co.uk  |   uk     |
 
 ---
 
@@ -98,10 +95,10 @@ A **fast** and **efficient** URL shortener built with [FastAPI](https://fastapi.
 
 ## ⚙️ Technical Details
 
--   🐍 Built with **Python** & **FastAPI**
--   🗜️ **Brotli** compression for path components
--   🔢 **Base62** encoding for URL-safe output
--   ⚡ **Lightweight** and **fast**
+- 🐍 Built with **Python** & **FastAPI**
+- 🗜️ **Brotli** compression for path components
+- 🔢 **Base62** encoding for URL-safe output
+- ⚡ **Lightweight** and **fast**
 
 ---
 
@@ -120,5 +117,34 @@ curl -X POST "https://urlshortner-ru2l.onrender.com/encode" \
 ```bash
 curl "https://urlshortner-ru2l.onrender.com/decode/s_g_8Ht..."
 ```
+
+---
+
+## 🏃‍♂️ Run Locally
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/yourusername/urlshortner.git
+   cd urlshortner
+   ```
+
+2. **Create a virtual environment (optional but recommended):**
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate
+   ```
+
+3. **Install dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Run the FastAPI app:**
+   ```bash
+   uvicorn main:app --reload
+   ```
+
+5. **Visit:**
+   Open [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) for the interactive API docs.
 
 ---
